@@ -686,9 +686,12 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                             .padding(15.dp, 15.dp)
                             .width(1400.dp)
                             .fillMaxHeight()
-                            .border(2.dp, Color.Red)
+                            .border(1.dp, Color.LightGray)
                     ) {
-                        Text("Copies ou téléchargement en cours :")
+                        Text(
+                            text = "Copies ou téléchargement en cours :",
+                            modifier = Modifier.padding(10.dp),
+                        )
 
                         // TODO() les bar de téléchargements
                     }
@@ -696,7 +699,7 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                     Button(
                         modifier = Modifier
                             .padding(40.dp,0.dp),
-                        onClick = {},
+                        onClick = {onNavBarSwitch()},
                     ){
                         Row(
                             modifier = Modifier

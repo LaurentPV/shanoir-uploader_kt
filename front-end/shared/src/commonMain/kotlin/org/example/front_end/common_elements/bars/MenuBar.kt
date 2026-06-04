@@ -3,8 +3,10 @@ package org.example.front_end.common_elements.bars
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -30,11 +33,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.rememberWindowState
+import front_end.shared.generated.resources.Res
 
 @Composable
 fun MenuBar() {
@@ -68,23 +76,177 @@ fun MenuBar() {
 
 @Composable
 fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
-    Dialog(
-        onDismissRequest = onDismiss,
+    val state = rememberWindowState(
+        width = 1000.dp,
+        height = 1000.dp,
+    )
+    Window(
+        onCloseRequest = onDismiss,
+        title = "Configuration du serveur DICOM",
+        state = state,
+        alwaysOnTop = true
     ) {
-        Card(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(1000.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(20.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
-            Text(
-                text = "This is a minimal dialog",
+
+            /**
+             * Distant PACS
+             */
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-                textAlign = TextAlign.Center,
+                    .width(600.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Text(
+                    text = "Paramètres de configuration du PACS distant :",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "AET :"
+                    )
+                    TextField(
+                        value = "",
+                        onValueChange = {}
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Adresse de l'hôte :"
+                    )
+                    TextField(
+                        value = "",
+                        onValueChange = {}
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Port :"
+                    )
+                    TextField(
+                        value = "",
+                        onValueChange = {}
+                    )
+                }
+            }
+
+            /**
+             * Local PACS
+             */
+            Column(
+                modifier = Modifier
+                    .width(600.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Text(
+                    text = "Paramètres de configuration du PACS local :",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "AET local :"
+                    )
+                    TextField(
+                        value = "",
+                        onValueChange = {}
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Adresse locale :"
+                    )
+                    TextField(
+                        value = "",
+                        onValueChange = {}
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Port local :"
+                    )
+                    TextField(
+                        value = "",
+                        onValueChange = {}
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = {}
+                ){
+                    Text("Vérifier la connexion au PACS distant")
+                }
+
+                Button(
+                    onClick = {}
+                ) {
+                    Text("Configurer le serveur")
+                }
+            }
+
+            Text(
+                text = "ATTENTION : vérifiez avec l'administrateur du PACS que le DICOM C-MOVE est activé pour la connexion !!!",
+                fontWeight = FontWeight.Bold
             )
+
+            Column(
+                modifier = Modifier
+                    .border(1.dp, Color.LightGray)
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
+                /**
+                 * Here will be the logs from the connection verification
+                 */
+            }
         }
     }
 }
