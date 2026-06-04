@@ -53,7 +53,6 @@ import org.example.front_end.common_elements.icons.calendar_month
 import org.example.front_end.common_elements.icons.arrow_forward
 import org.example.front_end.common_elements.icons.arrow_drop_down
 import org.example.front_end.common_elements.bars.MenuBar
-import org.example.front_end.common_elements.bars.NavBar
 import org.example.front_end.common_elements.icons.arrow_drop_up
 import org.example.front_end.common_elements.icons.file_save
 import java.text.SimpleDateFormat
@@ -137,7 +136,6 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                         modifier = Modifier
                             .background(color = Color.White)
                             .width(653.dp)
-                            .fillMaxHeight(.7f),
                         ) {
                         when(activeImportType) {
                             "PACS" -> {
@@ -203,7 +201,7 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                     modifier = Modifier
                                         .padding(20.dp),
                                     //.width(550.dp),
-                                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                                    verticalArrangement = Arrangement.spacedBy(15.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     var RBtnSelected by remember { mutableStateOf(true) }
@@ -437,6 +435,8 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                         }
                                     }
                                     Button(
+                                        modifier = Modifier
+                                            .padding(top = 16.dp),
                                         onClick = {},
                                     ){
                                         Text("Requêter le PACS")
