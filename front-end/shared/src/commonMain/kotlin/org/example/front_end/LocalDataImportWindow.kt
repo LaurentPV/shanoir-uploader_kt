@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -33,6 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +48,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -231,32 +235,12 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
+                                        val requestTypeRadioOptions = listOf("Patient", "Etude")
+                                        val selectedReqTypeOption = remember { mutableStateOf(requestTypeRadioOptions[0]) }
 
                                         Text("Niveau de requête :")
-                                        Row(
-                                            modifier = Modifier.width(350.dp),
-                                            horizontalArrangement = Arrangement.SpaceAround
-                                        ) {
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                            ) {
-                                                RadioButton(
-                                                    selected = RBtnSelected,
-                                                    onClick = {RBtnSelected = !RBtnSelected},
-                                                )
-                                                Text("Patient")
-                                            }
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                RadioButton(
-                                                    selected = !RBtnSelected,
-                                                    onClick = {RBtnSelected = !RBtnSelected}
-                                                )
-                                                Text("Etude")
-                                            }
-                                        }
 
+                                        RadioButtonGroup(requestTypeRadioOptions, selectedReqTypeOption)
                                     }
                                     Row(
                                         modifier = Modifier
@@ -511,11 +495,6 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     Button(
-                                        modifier = Modifier,
-//                                            .border(
-//                                                width = 2.dp,
-//                                                color = Color(0x67,0x50,0xA4),
-//                                                shape = RoundedCornerShape(20.dp)),
                                         onClick = {},
                                     ) {
                                         Icon(
@@ -523,7 +502,7 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                                 .padding(end = 10.dp),
                                             imageVector = file_save,
                                             contentDescription = "")
-                                        Text("Sélectionner un dossier")
+                                        Text("Sélectionner un fichier")
                                     }
                                 }
                             }
@@ -566,6 +545,9 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                 verticalArrangement = Arrangement.spacedBy(10.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ){
+                                val genderRadioOptions = listOf("Féminin", "Masculin", "Autre")
+                                val selectedGenderOption = remember { mutableStateOf(genderRadioOptions[0]) }
+
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth(),
@@ -630,38 +612,7 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                 ) {
 
                                     Text("Sexe :")
-                                    Row(
-                                        modifier = Modifier.width(350.dp),
-                                        horizontalArrangement = Arrangement.SpaceAround
-                                    ) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            RadioButton(
-                                                selected = true,
-                                                onClick = {},
-                                            )
-                                            Text("Féminin")
-                                        }
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            RadioButton(
-                                                selected = false,
-                                                onClick = {}
-                                            )
-                                            Text("Masculin")
-                                        }
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            RadioButton(
-                                                selected = false,
-                                                onClick = {}
-                                            )
-                                            Text("Autre")
-                                        }
-                                    }
+                                    RadioButtonGroup(genderRadioOptions,selectedGenderOption)
                                 }
                                 Button(
                                     onClick = {},
@@ -747,5 +698,40 @@ fun DatePickerModalInput(
             state = datePickerState,
             showModeToggle = false
         )
+    }
+}
+
+@Composable
+fun RadioButtonGroup(radioOptionList: List<String>,selectedRadioBtnState: MutableState<String>){
+    Row(
+        modifier = Modifier
+            .width(350.dp)
+            .selectableGroup()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        radioOptionList.forEach { rOption ->
+            Row(
+                modifier = Modifier
+                    .selectable(
+                        selected = (rOption == selectedRadioBtnState.value),
+                        onClick = {
+                            selectedRadioBtnState.value = rOption
+                        },
+                        role = Role.RadioButton
+                    )
+                    .padding(5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                RadioButton(
+                    selected = (rOption == selectedRadioBtnState.value),
+                    onClick = null,
+                )
+                Text(
+                    text = rOption,
+                )
+            }
+        }
     }
 }
