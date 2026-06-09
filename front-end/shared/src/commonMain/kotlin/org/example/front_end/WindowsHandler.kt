@@ -12,14 +12,6 @@ import org.example.front_end.common_elements.bars.MenuBar
 @Composable
 fun WindowsHandler() {
     var currentScreen by remember { mutableStateOf(Windows.LOGIN)}
-    var activeBottomBarCategory by remember { mutableStateOf("Infos") }
-    val onCategoryChange = {
-        if (activeBottomBarCategory == "Infos") {
-            activeBottomBarCategory = "Logs"
-        } else {
-            activeBottomBarCategory = "Infos"
-        }
-    }
 
     Column {
         MenuBar()
@@ -43,7 +35,11 @@ fun WindowsHandler() {
             )
         }
 
-        BottomInfoBar(currentScreen, activeBottomBarCategory,onCategoryChange)
+        BottomInfoBar(
+            currentScreen = currentScreen,
+            onScreenChange = {
+                currentScreen = Windows.EXPORT
+            })
     }
 
 

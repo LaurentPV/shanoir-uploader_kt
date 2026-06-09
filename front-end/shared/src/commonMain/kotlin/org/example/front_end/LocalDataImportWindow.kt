@@ -565,9 +565,6 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                         }
                     }
                 }
-
-                // Download Infos Panel
-
             }
         }
     }
