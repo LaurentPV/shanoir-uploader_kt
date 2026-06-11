@@ -33,12 +33,14 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import front_end.shared.generated.resources.Res
 import front_end.shared.generated.resources.logoShUp
+import org.example.front_end.common_elements.icons.check
 import org.example.front_end.common_elements.icons.info
 import org.example.front_end.common_elements.icons.menu
 import org.example.front_end.common_elements.icons.settings
@@ -58,7 +60,8 @@ fun MenuBar() {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ){
+        )
+        {
             /**
              * Shanoir Logo
              */
@@ -85,7 +88,8 @@ fun MenuBar() {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(30.dp)
-        ) {
+        )
+        {
             Text(
                 text = "Profil : [Type du profil]"
             )
@@ -118,6 +122,11 @@ fun MenuBar() {
 @Composable
 fun DropDownMenuShUp(isOpened: Boolean = true, onDismiss: () -> Unit) {
     var isConfigurationMenuOpened by remember { mutableStateOf(false) }
+    var isServerConfigurationMenuOpened by remember { mutableStateOf(false) }
+    var verifyServer by remember { mutableStateOf(false) }
+
+    var isLangMenuOpened by remember { mutableStateOf(false) }
+    var lang by remember { mutableStateOf("fr") }
 
     DropdownMenu(
         expanded = isOpened,
@@ -146,11 +155,11 @@ fun DropDownMenuShUp(isOpened: Boolean = true, onDismiss: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Icon(
-                        imageVector = settings,
-                        contentDescription = "",
-                        tint = Color(0x67,0x50,0xA4),
-                    )
+//                    Icon(
+//                        imageVector = settings,
+//                        contentDescription = "",
+//                        tint = Color(0x67,0x50,0xA4),
+//                    )
 
                     Text(
                         modifier = Modifier.fillMaxWidth(),
@@ -158,12 +167,136 @@ fun DropDownMenuShUp(isOpened: Boolean = true, onDismiss: () -> Unit) {
                         fontSize = 15.sp,
                         color = Color(0x67,0x50,0xA4)
                     )
+
+                    DropdownMenu(
+                        expanded = isConfigurationMenuOpened,
+                        onDismissRequest = {isConfigurationMenuOpened = false},
+                        offset = DpOffset(x = -292.dp, y=-30.dp)
+                    )
+                    {
+                        DropdownMenuItem(
+                            onClick = {
+                                isServerConfigurationMenuOpened = true
+                                isConfigurationMenuOpened = false
+                                onDismiss()
+                            },
+                            leadingIcon = {
+                                Icon(settings,"")
+                            },
+                            text = {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = "Configuration du serveur DICOM",
+                                    fontSize = 15.sp,
+                                )
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            onClick = {verifyServer = !verifyServer},
+                            leadingIcon = {
+                                if (verifyServer){
+                                    Icon(check, "")
+                                }
+                            },
+                            text = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                )
+                                {
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = "Vérifier sur le serveur Shanoir",
+                                        fontSize = 15.sp,
+                                    )
+                                }
+                            }
+                        )
+                    }
                 }
 
             }
         )
 
-        // About ShUp
+        // Language
+        DropdownMenuItem(
+            onClick = {
+                isLangMenuOpened = true
+            },
+            text = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Langue : $lang",
+                        fontSize = 15.sp,
+                        color = Color(0x67,0x50,0xA4)
+                    )
+
+                    DropdownMenu(
+                        expanded = isLangMenuOpened,
+                        onDismissRequest = {isLangMenuOpened = false},
+                        offset = DpOffset(x = -133.dp, y=-30.dp)
+                    )
+                    {
+                        DropdownMenuItem(
+                            onClick = {
+                                lang = "fr"
+                            },
+                            leadingIcon = {
+                                if (lang == "fr"){
+                                    Icon(check, "")
+                                }
+                            },
+                            text = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                )
+                                {
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = "Français",
+                                        fontSize = 15.sp,
+                                    )
+                                }
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            onClick = {
+                                lang = "en"
+                            },
+                            leadingIcon = {
+                                if (lang == "en"){
+                                    Icon(check, "")
+                                }
+                            },
+                            text = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                )
+                                {
+
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = "English",
+                                        fontSize = 15.sp,
+                                    )
+                                }
+                            }
+                        )
+                    }
+                }
+
+            }
+        )
+
+        // Verify Updates
         DropdownMenuItem(
             onClick = {},
             text = {
@@ -171,12 +304,31 @@ fun DropDownMenuShUp(isOpened: Boolean = true, onDismiss: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Icon(
-                        imageVector = info,
-                        contentDescription = "",
-                        tint = Color(0x67,0x50,0xA4),
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Vérifier les mises à jour",
+                        fontSize = 15.sp,
+                        color = Color(0x67,0x50,0xA4)
                     )
+                }
+            }
+        )
 
+        // About ShUp
+        DropdownMenuItem(
+            onClick = {},
+            leadingIcon = {
+                Icon(
+                    imageVector = info,
+                    contentDescription = "",
+                    tint = Color(0x67,0x50,0xA4),
+                )
+            },
+            text = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = "A propos",
@@ -188,8 +340,8 @@ fun DropDownMenuShUp(isOpened: Boolean = true, onDismiss: () -> Unit) {
         )
     }
 
-    if (isConfigurationMenuOpened) {
-        ConfigurationDialogWindow({isConfigurationMenuOpened = false})
+    if (isServerConfigurationMenuOpened) {
+        ConfigurationDialogWindow({isServerConfigurationMenuOpened = false})
     }
 }
 

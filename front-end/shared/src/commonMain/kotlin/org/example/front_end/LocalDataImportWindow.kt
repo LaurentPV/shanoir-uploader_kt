@@ -170,7 +170,7 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                     modifier = Modifier
                                         .padding(20.dp),
                                     //.width(550.dp),
-                                    verticalArrangement = Arrangement.spacedBy(15.dp),
+                                    verticalArrangement = Arrangement.spacedBy(13.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     var namePatient by remember { mutableStateOf("") }
@@ -425,7 +425,7 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(579.dp),
+                                        .height(565.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.Center
                                 ) {
