@@ -15,34 +15,39 @@ fun WindowsHandler() {
     val viewModel = ViewModelShUp()
 
     Column {
-        MenuBar()
-        when (currentScreen) {
-            Windows.LOGIN -> LoginWindow(
+        if (currentScreen == Windows.LOGIN) {
+            LoginWindow(
                 onLoginSuccess = {
                     currentScreen = Windows.IMPORT
                 }
             )
+        } else {
+            MenuBar()
+            when (currentScreen) {
+                Windows.IMPORT -> LocalDataImportWindow(
+                    onNavBarSwitch = {
+                        currentScreen = Windows.EXPORT
+                    }
+                )
 
-            Windows.IMPORT -> LocalDataImportWindow(
-                onNavBarSwitch = {
+                Windows.EXPORT -> ExportToServerWindow(
+                    viewModel = viewModel,
+                    onNavBarSwitch = {
+                        currentScreen = Windows.IMPORT
+                    }
+                )
+
+                else -> {}
+            }
+
+            BottomInfoBar(
+                currentScreen = currentScreen,
+                viewModel = viewModel,
+                onScreenChange = {
                     currentScreen = Windows.EXPORT
                 }
             )
-
-            Windows.EXPORT -> ExportToServerWindow(
-                viewModel = viewModel,
-                onNavBarSwitch = {
-                    currentScreen = Windows.IMPORT
-                }
-            )
         }
-
-        BottomInfoBar(
-            currentScreen = currentScreen,
-            viewModel = viewModel,
-            onScreenChange = {
-                currentScreen = Windows.EXPORT
-            })
     }
 
 

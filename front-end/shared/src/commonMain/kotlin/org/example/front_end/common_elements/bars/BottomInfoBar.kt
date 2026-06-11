@@ -300,7 +300,7 @@ fun BottomInfoBar(currentScreen: Windows, viewModel: ViewModelShUp, onScreenChan
 @Composable
 fun Logs() {
     val lazyColumnState = rememberLazyListState()
-    val inputStream: InputStream = File("/home/estevan/Documents/shanoir-uploader_kt/front-end/shared/src/commonMain/kotlin/org/example/front_end/logs.txt").inputStream()
+    val inputStream: InputStream = File("/home/estevan/Documents/shanoir-uploader_kt/front-end/shared/src/commonMain/composeResources/files/logs.txt").inputStream()
     val lineList = mutableListOf<String>()
 
     inputStream.bufferedReader().forEachLine { lineList.add(it) }

@@ -67,7 +67,6 @@ fun ExportToServerWindow(viewModel: ViewModelShUp, onNavBarSwitch: () -> Unit) {
         ) {
 
             var selectedLines by remember { mutableStateOf("") }
-            var isExportFormOpen by remember { mutableStateOf(false) }
 
             /**
              * NAV BAR

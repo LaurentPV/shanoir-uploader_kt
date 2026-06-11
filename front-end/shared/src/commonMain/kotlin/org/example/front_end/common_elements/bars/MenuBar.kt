@@ -3,6 +3,7 @@ package org.example.front_end.common_elements.bars
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -63,7 +66,7 @@ fun MenuBar() {
                 modifier = Modifier
                     .size(42.dp)
                     .clip(
-                        shape = RoundedCornerShape(20.dp)
+                        shape = RoundedCornerShape(10.dp)
                     ),
                 painter = painterResource(Res.drawable.logoShUp),
                 contentDescription = ""
@@ -77,6 +80,7 @@ fun MenuBar() {
                 color = Color(0x67,0x50,0xA4)
             )
         }
+
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
