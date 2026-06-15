@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,10 +45,11 @@ import org.example.front_end.common_elements.icons.check
 import org.example.front_end.common_elements.icons.info
 import org.example.front_end.common_elements.icons.menu
 import org.example.front_end.common_elements.icons.settings
+import org.example.front_end.viewmodel.ViewModelShUp
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun MenuBar() {
+fun MenuBar(viewModel: ViewModelShUp) {
     var isDropDownMenuOpened by remember { mutableStateOf(false) }
 
     Row(
@@ -112,7 +114,8 @@ fun MenuBar() {
                     isOpened = isDropDownMenuOpened,
                     onDismiss = {
                         isDropDownMenuOpened = false
-                    }
+                    },
+                    viewModel = viewModel
                 )
             }
         }
@@ -120,7 +123,7 @@ fun MenuBar() {
 }
 
 @Composable
-fun DropDownMenuShUp(isOpened: Boolean = true, onDismiss: () -> Unit) {
+fun DropDownMenuShUp(isOpened: Boolean = true, onDismiss: () -> Unit, viewModel: ViewModelShUp) {
     var isConfigurationMenuOpened by remember { mutableStateOf(false) }
     var isServerConfigurationMenuOpened by remember { mutableStateOf(false) }
     var verifyServer by remember { mutableStateOf(false) }
@@ -341,12 +344,12 @@ fun DropDownMenuShUp(isOpened: Boolean = true, onDismiss: () -> Unit) {
     }
 
     if (isServerConfigurationMenuOpened) {
-        ConfigurationDialogWindow({isServerConfigurationMenuOpened = false})
+        ConfigurationDialogWindow({isServerConfigurationMenuOpened = false}, viewModel = viewModel)
     }
 }
 
 @Composable
-fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
+fun ConfigurationDialogWindow(onDismiss: () -> Unit, viewModel: ViewModelShUp) {
     val state = rememberWindowState(
         width = 1000.dp,
         height = 1000.dp,
@@ -363,7 +366,6 @@ fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
-
             /**
              * Distant PACS
              */
@@ -371,7 +373,8 @@ fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
                 modifier = Modifier
                     .width(600.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
+            )
+            {
                 Text(
                     text = "Paramètres de configuration du PACS distant :",
                     fontSize = 25.sp,
@@ -384,12 +387,17 @@ fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    var aet by remember { mutableStateOf(viewModel.DICOMConfigplaceholder.first.getValue("AET")) }
+
                     Text(
                         text = "AET :"
                     )
                     TextField(
-                        value = "",
-                        onValueChange = {}
+                        value = aet,
+                        onValueChange = {
+                            aet = it
+                            viewModel.setDICOMConfig("distant", "AET", it)
+                        }
                     )
                 }
                 Row(
@@ -399,12 +407,17 @@ fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    var hostAddress by remember { mutableStateOf(viewModel.DICOMConfigplaceholder.first.getValue("HostAddress")) }
+
                     Text(
                         text = "Adresse de l'hôte :"
                     )
                     TextField(
-                        value = "",
-                        onValueChange = {}
+                        value = hostAddress,
+                        onValueChange = {
+                            hostAddress = it
+                            viewModel.setDICOMConfig("distant", "HostAddress", hostAddress)
+                        }
                     )
                 }
                 Row(
@@ -414,12 +427,17 @@ fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    var port by remember { mutableStateOf(viewModel.DICOMConfigplaceholder.first.getValue("Port")) }
+
                     Text(
                         text = "Port :"
                     )
                     TextField(
-                        value = "",
-                        onValueChange = {}
+                        value = port,
+                        onValueChange = {
+                            port = it
+                            viewModel.setDICOMConfig("distant", "Port", port)
+                        }
                     )
                 }
             }
@@ -444,12 +462,17 @@ fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    var localAET by remember { mutableStateOf(viewModel.DICOMConfigplaceholder.second.getValue("LocalAET")) }
+
                     Text(
                         text = "AET local :"
                     )
                     TextField(
-                        value = "",
-                        onValueChange = {}
+                        value = localAET,
+                        onValueChange = {
+                            localAET = it
+                            viewModel.setDICOMConfig("local", "LocalAET", localAET)
+                        }
                     )
                 }
                 Row(
@@ -459,12 +482,17 @@ fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    var localAddress by remember { mutableStateOf(viewModel.DICOMConfigplaceholder.second.getValue("LocalAddress")) }
+
                     Text(
                         text = "Adresse locale :"
                     )
                     TextField(
-                        value = "",
-                        onValueChange = {}
+                        value = localAddress,
+                        onValueChange = {
+                            localAddress = it
+                            viewModel.setDICOMConfig("local", "LocalAddress", localAddress)
+                        }
                     )
                 }
                 Row(
@@ -474,12 +502,17 @@ fun ConfigurationDialogWindow(onDismiss: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    var localPort by remember { mutableStateOf(viewModel.DICOMConfigplaceholder.second.getValue("LocalPort")) }
+
                     Text(
                         text = "Port local :"
                     )
                     TextField(
-                        value = "",
-                        onValueChange = {}
+                        value = localPort,
+                        onValueChange = {
+                            localPort = it
+                            viewModel.setDICOMConfig("local", "LocalPort", localPort)
+                        }
                     )
                 }
             }

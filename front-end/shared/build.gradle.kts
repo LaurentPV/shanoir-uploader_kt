@@ -7,6 +7,7 @@ plugins {
 kotlin {
     jvm()
 
+    val ktor_version: String by project
 
     sourceSets {
         commonMain.dependencies {
@@ -18,6 +19,8 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation("io.ktor:ktor-client-core:${ktor_version}")
+            implementation("io.ktor:ktor-client-cio:${ktor_version}")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

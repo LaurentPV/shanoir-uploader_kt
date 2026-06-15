@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import org.example.front_end.common_elements.bars.BottomInfoBar
 import org.example.front_end.common_elements.bars.MenuBar
+import org.example.front_end.viewmodel.ViewModelShUp
 
 @Composable
 fun WindowsHandler() {
@@ -22,7 +23,7 @@ fun WindowsHandler() {
                 }
             )
         } else {
-            MenuBar()
+            MenuBar(viewModel)
             when (currentScreen) {
                 Windows.IMPORT -> LocalDataImportWindow(
                     onNavBarSwitch = {

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.scrollableArea
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -87,8 +88,8 @@ fun ExportFormWindow(onClose: () -> Unit) {
                     shape = RoundedCornerShape(20.dp)
                 )
                 .background(Color.White),
-
-        ) {
+        )
+        {
             /**
              * DICOM Informations
              */
@@ -98,6 +99,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
                     .padding(start = 20.dp, top = 20.dp, end = 20.dp, bottom = 10.dp)
             )
             {
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -174,7 +176,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                 TextField(
                                     modifier = Modifier
-                                        .size(height = 42.dp, width = 200.dp),
+                                        .width(200.dp),
                                     value = "",
                                     onValueChange = {},
                                     readOnly = true
@@ -197,7 +199,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                 TextField(
                                     modifier = Modifier
-                                        .size(height = 42.dp, width = 200.dp),
+                                        .width(200.dp),
                                     value = "",
                                     onValueChange = {},
                                     readOnly = true
@@ -220,7 +222,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                 TextField(
                                     modifier = Modifier
-                                        .size(height = 42.dp, width = 200.dp),
+                                        .width(200.dp),
                                     value = "",
                                     onValueChange = {},
                                     readOnly = true
@@ -251,7 +253,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                 TextField(
                                     modifier = Modifier
-                                        .size(height = 42.dp, width = 200.dp),
+                                        .width(200.dp),
                                     value = "",
                                     onValueChange = {},
                                     readOnly = true
@@ -274,7 +276,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                 TextField(
                                     modifier = Modifier
-                                        .size(height = 42.dp, width = 200.dp),
+                                        .width(200.dp),
                                     value = "",
                                     onValueChange = {},
                                     readOnly = true
@@ -297,7 +299,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                 TextField(
                                     modifier = Modifier
-                                        .size(height = 42.dp, width = 200.dp),
+                                        .width(200.dp),
                                     value = "",
                                     onValueChange = {},
                                     readOnly = true
@@ -320,7 +322,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                 TextField(
                                     modifier = Modifier
-                                        .size(height = 42.dp, width = 200.dp),
+                                        .width(200.dp),
                                     value = "",
                                     onValueChange = {},
                                     readOnly = true
@@ -341,6 +343,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
             )
             {
                 var study by remember { mutableStateOf("") }
+                var studyContainsStudyCards = true
 
                 var studyCard by remember { mutableStateOf("") }
                 var isStudyCardChecked by remember { mutableStateOf(false) }
@@ -426,8 +429,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                     }
                                     TextField(
                                         modifier=Modifier
-                                            .fillMaxWidth()
-                                            .height(42.dp),
+                                            .fillMaxWidth(),
                                         value = study,
                                         onValueChange = {study = it},
                                         readOnly = true,
@@ -461,128 +463,133 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                 }
                             }
 
-                            /**
-                             * Checkbox Study Cards
-                             */
-                            Row(
-                                modifier = Modifier,
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(90.dp),
-                            )
-                            {
-
-                                var iconCheckbox by remember { mutableStateOf(check_box_outline_blank) }
-
-                                iconCheckbox = if (isStudyCardChecked) {
-                                    check_box
-                                } else {
-                                    check_box_outline_blank
-                                }
-
-                                Text(
-                                    text = "Study Cards ? : ",
-                                    fontSize = 16.sp
-                                )
-
-                                IconButton(
-                                    onClick = {
-                                        isStudyCardChecked = !isStudyCardChecked
-                                    }
-                                ){
-                                    Icon(
-                                        modifier = Modifier
-                                            .size(32.dp),
-                                        imageVector = iconCheckbox,
-                                        contentDescription = "",
-                                        tint = Color(0x67,0x50,0xA4)
-                                    )
-                                }
-                            }
-
-                            if (isStudyCardChecked) { // TODO() Only when the study has study cards
-
+                            if (studyContainsStudyCards) {
                                 /**
-                                 * Choose Study Card
+                                 * Checkbox Study Cards
                                  */
                                 Row(
                                     modifier = Modifier,
                                     verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(35.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(90.dp),
                                 )
                                 {
-                                    val studies = listOf<String>()
-                                    var showMenuStudy by remember { mutableStateOf(false) }
+
+                                    var iconCheckbox by remember { mutableStateOf(check_box_outline_blank) }
+
+                                    iconCheckbox = if (isStudyCardChecked) {
+                                        check_box
+                                    } else {
+                                        check_box_outline_blank
+                                    }
 
                                     Text(
-                                        text = "Choisir une study Card : ",
+                                        text = "Study Cards ? : ",
                                         fontSize = 16.sp
                                     )
 
-                                    Column {
-                                        val iconDrop  = if (showMenuStudy) {
-                                            arrow_drop_up
-                                        } else {
-                                            arrow_drop_down
+                                    IconButton(
+                                        onClick = {
+                                            isStudyCardChecked = !isStudyCardChecked
                                         }
-                                        TextField(
-                                            modifier=Modifier
-                                                .fillMaxWidth()
-                                                .height(42.dp),
-                                            value = studyCard,
-                                            onValueChange = {studyCard = it},
-                                            readOnly = true,
-                                            trailingIcon = { Icon(
-                                                imageVector = iconDrop,
-                                                contentDescription = "",
-                                                modifier = Modifier
-                                                    .clickable(onClick = {
-                                                        showMenuStudy = !showMenuStudy
-                                                    })) }
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier
+                                                .size(32.dp),
+                                            imageVector = iconCheckbox,
+                                            contentDescription = "",
+                                            tint = Color(0x67, 0x50, 0xA4)
                                         )
-                                        DropdownMenu(
-                                            expanded = showMenuStudy,
-                                            onDismissRequest = {showMenuStudy = false},
-                                            modifier = Modifier.width(with(
-                                                LocalDensity.current){
-                                                686.dp
+                                    }
+                                }
+
+                                if (isStudyCardChecked) { // TODO() Only when the study has study cards
+
+                                    /**
+                                     * Choose Study Card
+                                     */
+                                    Row(
+                                        modifier = Modifier,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(35.dp),
+                                    )
+                                    {
+                                        val studies = listOf<String>()
+                                        var showMenuStudy by remember { mutableStateOf(false) }
+
+                                        Text(
+                                            text = "Choisir une study Card : ",
+                                            fontSize = 16.sp
+                                        )
+
+                                        Column {
+                                            val iconDrop = if (showMenuStudy) {
+                                                arrow_drop_up
+                                            } else {
+                                                arrow_drop_down
                                             }
+                                            TextField(
+                                                modifier = Modifier
+                                                    .fillMaxWidth(),
+                                                value = studyCard,
+                                                onValueChange = { studyCard = it },
+                                                readOnly = true,
+                                                trailingIcon = {
+                                                    Icon(
+                                                        imageVector = iconDrop,
+                                                        contentDescription = "",
+                                                        modifier = Modifier
+                                                            .clickable(onClick = {
+                                                                showMenuStudy = !showMenuStudy
+                                                            })
+                                                    )
+                                                }
                                             )
-                                        ) {
-                                            studies.forEach { studyText ->
-                                                DropdownMenuItem(
-                                                    text = {Text(studyText)},
-                                                    onClick = {
-                                                        studyCard = studyText
-                                                        showMenuStudy = false
+                                            DropdownMenu(
+                                                expanded = showMenuStudy,
+                                                onDismissRequest = { showMenuStudy = false },
+                                                modifier = Modifier.width(
+                                                    with(
+                                                        LocalDensity.current
+                                                    ) {
+                                                        686.dp
                                                     }
                                                 )
+                                            ) {
+                                                studies.forEach { studyText ->
+                                                    DropdownMenuItem(
+                                                        text = { Text(studyText) },
+                                                        onClick = {
+                                                            studyCard = studyText
+                                                            showMenuStudy = false
+                                                        }
+                                                    )
+                                                }
                                             }
                                         }
                                     }
-                                }
 
-                                /**
-                                 * Filter Study Cards
-                                 */
-                                Row(
-                                    modifier = Modifier,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(45.dp),
-                                )
-                                {
-                                    Text(
-                                        text = "Filtrer les study cards : ",
-                                        fontSize = 16.sp
+                                    /**
+                                     * Filter Study Cards
+                                     */
+                                    Row(
+                                        modifier = Modifier,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(45.dp),
                                     )
+                                    {
+                                        Text(
+                                            text = "Filtrer les study cards : ",
+                                            fontSize = 16.sp
+                                        )
 
-                                    TextField(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(42.dp),
-                                        value = "",
-                                        onValueChange = {},
-                                        readOnly = true
-                                    )
+                                        TextField(
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            value = "",
+                                            onValueChange = {},
+                                            readOnly = true
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -599,6 +606,8 @@ fun ExportFormWindow(onClose: () -> Unit) {
                     .padding(20.dp, 10.dp)
             )
             {
+                var createdSubject by remember { mutableStateOf("") }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -674,11 +683,10 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                 TextField(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(42.dp),
-                                    value = "",
-                                    onValueChange = {},
-                                    readOnly = true
+                                        .fillMaxWidth(),
+                                    value = createdSubject,
+                                    onValueChange = {createdSubject = it},
+                                    readOnly = false
                                 )
                             }
 
@@ -708,8 +716,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                     }
                                     TextField(
                                         modifier=Modifier
-                                            .fillMaxWidth()
-                                            .height(42.dp),
+                                            .fillMaxWidth(),
                                         value = subject,
                                         onValueChange = {subject = it},
                                         readOnly = true,
@@ -815,6 +822,8 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                             var showMenuCategeory by remember { mutableStateOf(false) }
 
                                             Text(
+                                                modifier = Modifier
+                                                    .width(220.dp),
                                                 text = "Catégorie de l'image : ",
                                                 fontSize = 16.sp
                                             )
@@ -827,8 +836,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                                 }
                                                 TextField(
                                                     modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .height(42.dp),
+                                                        .fillMaxWidth(),
                                                     value = subject,
                                                     onValueChange = { subject = it },
                                                     readOnly = true,
@@ -890,7 +898,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                             Text(
                                                 modifier = Modifier
-                                                    .width(170.dp),
+                                                    .width(220.dp),
                                                 text = "Dominance hémisphérique du langage : ",
                                                 fontSize = 16.sp
                                             )
@@ -903,8 +911,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                                 }
                                                 TextField(
                                                     modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .height(42.dp),
+                                                        .fillMaxWidth(),
                                                     value = subject,
                                                     onValueChange = { subject = it },
                                                     readOnly = true,
@@ -966,7 +973,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                             Text(
                                                 modifier = Modifier
-                                                    .width(170.dp),
+                                                    .width(220.dp),
                                                 text = "Dominance hémisphérique manuelle : ",
                                                 fontSize = 16.sp
                                             )
@@ -979,8 +986,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                                 }
                                                 TextField(
                                                     modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .height(42.dp),
+                                                        .fillMaxWidth(),
                                                     value = subject,
                                                     onValueChange = { subject = it },
                                                     readOnly = true,
@@ -1039,15 +1045,14 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                             Text(
                                                 modifier = Modifier
-                                                    .width(170.dp),
+                                                    .width(220.dp),
                                                 text = "Commentaires personnels : ",
                                                 fontSize = 16.sp
                                             )
 
                                             TextField(
                                                 modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    ,
+                                                    .fillMaxWidth(),
                                                 value = comment,
                                                 onValueChange = {comment = it},
                                             )
@@ -1073,15 +1078,14 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                             Text(
                                                 modifier = Modifier
-                                                    .width(170.dp),
+                                                    .width(220.dp),
                                                 text = "Identifiant sujet : ",
                                                 fontSize = 16.sp
                                             )
 
                                             TextField(
                                                 modifier = Modifier
-                                                    .fillMaxWidth()
-                                                ,
+                                                    .fillMaxWidth(),
                                                 value = comment,
                                                 onValueChange = {comment = it},
                                             )
@@ -1108,7 +1112,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                         Text(
                                             modifier = Modifier
-                                                .width(160.dp),
+                                                .width(210.dp),
                                             text = "Le sujet est-il physiquement impliqué ? : ",
                                             fontSize = 16.sp
                                         )
@@ -1231,8 +1235,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                     }
                                     TextField(
                                         modifier=Modifier
-                                            .fillMaxWidth()
-                                            .height(42.dp),
+                                            .fillMaxWidth(),
                                         value = existingExam,
                                         onValueChange = {existingExam = it},
                                         readOnly = true,
@@ -1317,7 +1320,9 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                     var showMenuCenters by remember { mutableStateOf(false) }
 
                                     Text(
-                                        text = "Compléter un exam existant : ",
+                                        modifier = Modifier
+                                            .width(225.dp),
+                                        text = "Centre d'examen : ",
                                         fontSize = 16.sp
                                     )
 
@@ -1329,8 +1334,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
                                         }
                                         TextField(
                                             modifier=Modifier
-                                                .fillMaxWidth()
-                                                .height(42.dp),
+                                                .fillMaxWidth(),
                                             value = center,
                                             onValueChange = {center = it},
                                             readOnly = true,
@@ -1438,8 +1442,7 @@ fun ExportFormWindow(onClose: () -> Unit) {
 
                                     TextField(
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(42.dp),
+                                            .fillMaxWidth(),
                                         value = "",
                                         onValueChange = {},
                                         readOnly = true
@@ -1451,12 +1454,16 @@ fun ExportFormWindow(onClose: () -> Unit) {
                 }
             }
 
+            /**
+             * Cancel & Export Buttons
+             */
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 20.dp),
                 horizontalArrangement = Arrangement.SpaceAround
-            ) {
+            )
+            {
                 Button(
                     onClick = onClose
                 ){
