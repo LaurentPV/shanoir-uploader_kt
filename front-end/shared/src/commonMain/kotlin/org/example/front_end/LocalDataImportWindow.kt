@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -27,12 +29,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,16 +52,20 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import org.example.front_end.common_elements.bars.CategoryBarElement
 import org.example.front_end.common_elements.icons.calendar_month
 import org.example.front_end.common_elements.icons.arrow_forward
 import org.example.front_end.common_elements.icons.arrow_drop_down
 import org.example.front_end.common_elements.bars.MenuBar
 import org.example.front_end.common_elements.icons.arrow_drop_up
 import org.example.front_end.common_elements.icons.file_save
+import org.example.front_end.common_elements.icons.info
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -66,8 +77,6 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                 .fillMaxWidth()
         ) {
             var activeImportType by remember { mutableStateOf("PACS") } // Can be set to "PACS" or "Disk"
-
-            MenuBar()
 
             /**
              * NAV BAR
@@ -121,7 +130,6 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
                     .padding(20.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
@@ -137,75 +145,34 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                             .background(color = Color.White)
                             .width(653.dp)
                         ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .drawBehind{
+                                    val bordersize = 1.dp.toPx()
+                                    drawLine(
+                                        color = Color.LightGray,
+                                        start = Offset(0f, size.height-2f),
+                                        end = Offset(size.width, size.height-2f),
+                                        strokeWidth = bordersize
+                                    )
+                                },
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            CategoryBarElement("Requêter le PACS", (activeImportType=="PACS"),{activeImportType="PACS"},20.sp, 20)
+                            CategoryBarElement("Ajouter depuis le Disk", (activeImportType == "Disk"),{activeImportType="Disk"}, 20.sp, 20)
+                        }
+
                         when(activeImportType) {
                             "PACS" -> {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .drawBehind{
-                                            val bordersize = 1.dp.toPx()
-                                            drawLine(
-                                                color = Color.LightGray,
-                                                start = Offset(0f, size.height-2f),
-                                                end = Offset(size.width, size.height-2f),
-                                                strokeWidth = bordersize
-                                            )
-                                        },
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .clickable(
-                                                onClick = {}
-                                            )
-                                            .background(Color(0xEA,0xDD,0xFF))
-                                            .drawBehind{
-                                                val bordersize = 4.dp.toPx()
-                                                drawLine(
-                                                    color = Color(0x67,0x50,0xA4),
-                                                    start = Offset(0f, size.height-2f),
-                                                    end = Offset(size.width, size.height-2f),
-                                                    strokeWidth = bordersize
-                                                )
-                                            },
-                                        contentAlignment = Alignment.Center
-                                    ){
-                                        Text(
-                                            text = "Requêter le PACS",
-                                            fontSize = 20.sp,
-                                            modifier = Modifier
-                                                .padding(67.dp, 20.dp)
-                                        )
-                                    }
-
-                                    Box(
-                                        modifier = Modifier
-                                            .clickable(
-                                                onClick = {
-                                                    activeImportType = "Disk"
-                                                }
-                                            ),
-                                        contentAlignment = Alignment.Center
-                                    ){
-                                        Text(
-                                            text = "Ajouter depuis le Disk",
-                                            fontSize = 20.sp,
-                                            modifier = Modifier
-                                                .padding(67.dp, 20.dp)
-                                        )
-                                    }
-                                }
-
                                 // Form
                                 Column(
                                     modifier = Modifier
                                         .padding(20.dp),
                                     //.width(550.dp),
-                                    verticalArrangement = Arrangement.spacedBy(15.dp),
+                                    verticalArrangement = Arrangement.spacedBy(13.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    var RBtnSelected by remember { mutableStateOf(true) }
-
                                     var namePatient by remember { mutableStateOf("") }
 
                                     var idPatient by remember { mutableStateOf("") }
@@ -231,32 +198,21 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
+                                        val requestTypeRadioOptions = listOf("Patient", "Etude")
+                                        val selectedReqTypeOption = remember { mutableStateOf(requestTypeRadioOptions[0]) }
 
-                                        Text("Niveau de requête :")
-                                        Row(
-                                            modifier = Modifier.width(350.dp),
-                                            horizontalArrangement = Arrangement.SpaceAround
-                                        ) {
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
+                                        Row {
+                                            Text("Niveau de requête : ")
+                                            TooltipBox(
+                                                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                                                tooltip = { PlainTooltip { Text("Sélectionner en fonction de la configuration du PACS") } },
+                                                state = rememberTooltipState()
                                             ) {
-                                                RadioButton(
-                                                    selected = RBtnSelected,
-                                                    onClick = {RBtnSelected = !RBtnSelected},
-                                                )
-                                                Text("Patient")
-                                            }
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                RadioButton(
-                                                    selected = !RBtnSelected,
-                                                    onClick = {RBtnSelected = !RBtnSelected}
-                                                )
-                                                Text("Etude")
+                                                Icon(info, "")
                                             }
                                         }
 
+                                        RadioButtonGroup(requestTypeRadioOptions, selectedReqTypeOption)
                                     }
                                     Row(
                                         modifier = Modifier
@@ -264,7 +220,16 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text("Nom du patient : ")
+                                        Row {
+                                            Text("Nom, Prénom du patient : ")
+                                            TooltipBox(
+                                                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                                                tooltip = { PlainTooltip { Text("Nom et prénoms doivent être séparés par une virgule. Seules les premières lettres du nom suffisent") } },
+                                                state = rememberTooltipState()
+                                            ) {
+                                                Icon(info, "")
+                                            }
+                                        }
                                         TextField(
                                             modifier=Modifier.width(350.dp),
                                             value = namePatient,
@@ -277,6 +242,7 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
+
                                         Text("ID du patient : ")
                                         TextField(
                                             modifier=Modifier.width(350.dp),
@@ -336,7 +302,16 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text("Description de l'étude : ")
+                                        Row {
+                                            Text("Description de l'étude : ")
+                                            TooltipBox(
+                                                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                                                tooltip = { PlainTooltip { Text("Nom de l'examen, un seul mot suffit, en respectant la casse") } },
+                                                state = rememberTooltipState()
+                                            ) {
+                                                Icon(info, "")
+                                            }
+                                        }
                                         TextField(
                                             modifier=Modifier.width(350.dp),
                                             value = descStudy,
@@ -445,77 +420,16 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                             }
 
                             "Disk" -> {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .drawBehind{
-                                            val bordersize = 1.dp.toPx()
-                                            drawLine(
-                                                color = Color.LightGray,
-                                                start = Offset(0f, size.height-2f),
-                                                end = Offset(size.width, size.height-2f),
-                                                strokeWidth = bordersize
-                                            )
-                                        },
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .clickable(
-                                                onClick = {
-                                                    activeImportType = "PACS"
-                                                }
-                                            ),
-                                        contentAlignment = Alignment.Center
-                                    ){
-                                        Text(
-                                            text = "Requêter le PACS",
-                                            fontSize = 20.sp,
-                                            modifier = Modifier
-                                                .padding(67.dp, 20.dp)
-                                        )
-                                    }
-
-                                    Box(
-                                        modifier = Modifier
-                                            .clickable(
-                                                onClick = {}
-                                            )
-                                            .background(Color(0xEA,0xDD,0xFF))
-                                            .drawBehind{
-                                                val bordersize = 4.dp.toPx()
-                                                drawLine(
-                                                    color = Color(0x67,0x50,0xA4),
-                                                    start = Offset(0f, size.height-2f),
-                                                    end = Offset(size.width, size.height-2f),
-                                                    strokeWidth = bordersize
-                                                )
-                                            },
-                                        contentAlignment = Alignment.Center
-                                    ){
-                                        Text(
-                                            text = "Ajouter depuis le Disk",
-                                            fontSize = 20.sp,
-                                            modifier = Modifier
-                                                .padding(67.dp, 20.dp)
-                                        )
-                                    }
-                                }
 
                                 // Add from disk
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(525.dp),
+                                        .height(565.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     Button(
-                                        modifier = Modifier,
-//                                            .border(
-//                                                width = 2.dp,
-//                                                color = Color(0x67,0x50,0xA4),
-//                                                shape = RoundedCornerShape(20.dp)),
                                         onClick = {},
                                     ) {
                                         Icon(
@@ -523,11 +437,22 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                                 .padding(end = 10.dp),
                                             imageVector = file_save,
                                             contentDescription = "")
-                                        Text("Sélectionner un dossier")
+                                        Text("Sélectionner un fichier")
                                     }
                                 }
                             }
                         }
+                    }
+
+                    /**
+                     * When the selected profile is "OFSEP", the verification panel is displayed. Otherwise, it is hidden
+                     *  and the Tree panel becomes wider. The import button is at the bottom of the tree panel.
+                     */
+
+                    val profile = "OFSEP"
+                    var treePanelWidth = .99f
+                    if (profile=="OFSEP") {
+                        treePanelWidth = .49f
                     }
 
                     /**
@@ -537,22 +462,51 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                         modifier = Modifier
                             .background(color = Color.White)
                             .padding(20.dp)
-                            .width(580.dp)
-                            .fillMaxHeight(.7f)
+                            .fillMaxWidth(treePanelWidth)
+                            .fillMaxHeight(.7f),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         /**
                          * Here is the tree with all the studies
                          */
+                        Column {  }
+
+
+                        if (profile != "OFSEP") {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .drawBehind{
+                                        val bordersize = 1.dp.toPx()
+                                        drawLine(
+                                            color = Color.LightGray,
+                                            start = Offset(0f, -2f),
+                                            end = Offset(size.width, -2f),
+                                            strokeWidth = bordersize
+                                        )
+                                    },
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Button(
+                                    onClick = {},
+                                ) {
+                                    Text("Importer l'examen")
+                                }
+                            }
+                        }
                     }
 
-                    /**
-                     * Panel Verification
-                     */
-                    Column(
-                        modifier = Modifier
-                            .background(color = Color.White)
-                            .padding(20.dp)
-                            .width(550.dp),
+
+
+                    if(profile == "OFSEP") {
+                        /**
+                         * Panel Verification
+                         */
+                        Column(
+                            modifier = Modifier
+                                .background(color = Color.White)
+                                .padding(20.dp)
+                                .width(550.dp),
                         ) {
                             Text(
                                 text = "3. Vérification du patient",
@@ -566,6 +520,9 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                 verticalArrangement = Arrangement.spacedBy(10.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ){
+                                val genderRadioOptions = listOf("Féminin", "Masculin", "Autre")
+                                val selectedGenderOption = remember { mutableStateOf(genderRadioOptions[0]) }
+
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth(),
@@ -630,38 +587,7 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                 ) {
 
                                     Text("Sexe :")
-                                    Row(
-                                        modifier = Modifier.width(350.dp),
-                                        horizontalArrangement = Arrangement.SpaceAround
-                                    ) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            RadioButton(
-                                                selected = true,
-                                                onClick = {},
-                                            )
-                                            Text("Féminin")
-                                        }
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            RadioButton(
-                                                selected = false,
-                                                onClick = {}
-                                            )
-                                            Text("Masculin")
-                                        }
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            RadioButton(
-                                                selected = false,
-                                                onClick = {}
-                                            )
-                                            Text("Autre")
-                                        }
-                                    }
+                                    RadioButtonGroup(genderRadioOptions,selectedGenderOption)
                                 }
                                 Button(
                                     onClick = {},
@@ -669,49 +595,10 @@ fun LocalDataImportWindow(onNavBarSwitch: () -> Unit) {
                                     Text("Téléchargement (PACS) ou copier (CD/DVD)")
                                 }
                             }
-                    }
-                }
-
-                // Download Infos Panel
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                        .background(Color.White),
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    // Dowload Infos
-                    Column(
-                        modifier = Modifier
-                            .padding(15.dp, 15.dp)
-                            .width(1400.dp)
-                            .fillMaxHeight()
-                            .border(2.dp, Color.Red)
-                    ) {
-                        Text("Copies ou téléchargement en cours :")
-
-                        // TODO() les bar de téléchargements
-                    }
-
-                    Button(
-                        modifier = Modifier
-                            .padding(40.dp,0.dp),
-                        onClick = {},
-                    ){
-                        Row(
-                            modifier = Modifier
-                                .width(300.dp),
-                            horizontalArrangement = Arrangement.spacedBy(20.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("Voir les imports", fontSize = 30.sp)
-                            Icon(imageVector = arrow_forward, "", modifier = Modifier.width(40.dp).height(40.dp))
                         }
-
                     }
                 }
             }
-
         }
     }
 }
@@ -744,5 +631,40 @@ fun DatePickerModalInput(
             state = datePickerState,
             showModeToggle = false
         )
+    }
+}
+
+@Composable
+fun RadioButtonGroup(radioOptionList: List<String>,selectedRadioBtnState: MutableState<String>){
+    Row(
+        modifier = Modifier
+            .width(350.dp)
+            .selectableGroup()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        radioOptionList.forEach { rOption ->
+            Row(
+                modifier = Modifier
+                    .selectable(
+                        selected = (rOption == selectedRadioBtnState.value),
+                        onClick = {
+                            selectedRadioBtnState.value = rOption
+                        },
+                        role = Role.RadioButton
+                    )
+                    .padding(5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                RadioButton(
+                    selected = (rOption == selectedRadioBtnState.value),
+                    onClick = null,
+                )
+                Text(
+                    text = rOption,
+                )
+            }
+        }
     }
 }

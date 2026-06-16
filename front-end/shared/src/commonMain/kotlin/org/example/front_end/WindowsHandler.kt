@@ -1,34 +1,57 @@
 package org.example.front_end
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import org.example.front_end.common_elements.bars.BottomInfoBar
+import org.example.front_end.common_elements.bars.MenuBar
+import org.example.front_end.viewmodel.ViewModelShUp
 
 @Composable
 fun WindowsHandler() {
     var currentScreen by remember { mutableStateOf(Windows.LOGIN)}
+    val viewModel = ViewModelShUp()
 
-    when (currentScreen) {
-        Windows.LOGIN -> LoginWindow(
-            onLoginSuccess = {
-                currentScreen = Windows.IMPORT
-            }
-        )
+    Column {
+        if (currentScreen == Windows.LOGIN) {
+            LoginWindow(
+                onLoginSuccess = {
+                    currentScreen = Windows.IMPORT
+                }
+            )
+        } else {
+            MenuBar(viewModel)
+            when (currentScreen) {
+                Windows.IMPORT -> LocalDataImportWindow(
+                    onNavBarSwitch = {
+                        currentScreen = Windows.EXPORT
+                    }
+                )
 
-        Windows.IMPORT -> LocalDataImportWindow(
-            onNavBarSwitch = {
-                currentScreen = Windows.EXPORT
-            }
-        )
+                Windows.EXPORT -> ExportToServerWindow(
+                    viewModel = viewModel,
+                    onNavBarSwitch = {
+                        currentScreen = Windows.IMPORT
+                    }
+                )
 
-        Windows.EXPORT -> ExportToServerWindow(
-            onNavBarSwitch = {
-                currentScreen = Windows.IMPORT
+                else -> {}
             }
-        )
+
+            BottomInfoBar(
+                currentScreen = currentScreen,
+                viewModel = viewModel,
+                onScreenChange = {
+                    currentScreen = Windows.EXPORT
+                }
+            )
+        }
     }
+
+
 }
 
 /**
